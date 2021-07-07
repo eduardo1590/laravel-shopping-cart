@@ -11,6 +11,7 @@ class ProductList extends Component
     use WithPagination;
 
     public $search;
+    
 
     public function mount(): void
     {
