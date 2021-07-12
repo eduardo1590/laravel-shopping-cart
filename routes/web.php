@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Livewire\Cart;
+use App\Models\Product;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,5 +24,6 @@ Route::get('/productos', [ProductController::class, 'index']);
 Route::get('/carrito', Cart::class)->name('cart');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
+    $products = Product::all();
+    return view('dashboard', compact('products'));
 })->name('dashboard');
