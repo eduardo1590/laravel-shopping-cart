@@ -16,7 +16,11 @@
                         @foreach ($content as $id => $item)
                             <tr class="hover:bg-grey-lighter">
                                 <td class="py-4 px-6 border-b border-grey-light">{{ $item->name}}</td>
-                                <td class="py-4 px-6 border-b border-grey-light">{{ $item->qty }}</td>
+                                <td class="py-4 px-6 border-b border-grey-light">
+                                <button class="text-sm p-2 border-2 rounded border-red-200 hover:border-red-300 bg-red-200 hover:bg-red-300" wire:click="updateCartItem('{{ $id }}', '-')"> - </button>
+                                {{ $item->qty }}
+                                <button class="text-sm p-2 border-2 rounded border-green-200 hover:border-green-300 bg-green-200 hover:bg-green-300" wire:click="updateCartItem('{{ $id }}', '+')"> + </button>
+                                </td>
                                 <td class="py-4 px-6 border-b border-grey-light">${{ $item->price }}</td>
                                 <td class="py-4 px-6 border-b border-grey-light">${{ $item->qty * $item->price }}</td>
                                 <td class="py-4 px-6 border-b border-grey-light">
@@ -37,6 +41,9 @@
                 </table>
 
                 <div class="text-right w-full p-6">
+                    <button wire:click="cotizacion()" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                        Cotizacion
+                    </button>
                     <button wire:click="checkout()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Confirmar
                     </button>

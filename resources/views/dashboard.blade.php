@@ -11,6 +11,5 @@
                 <livewire:product-card :product='$product' />
             @endforeach
         </div>
-        <livewire:cart-card />
     </div>
 </x-app-layout>
