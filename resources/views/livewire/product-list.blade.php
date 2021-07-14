@@ -1,4 +1,11 @@
 <div>
+    <div>
+        @if (session()->has('message'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-3" role="alert">
+                {{ session('message') }}
+            </div>
+        @endif
+    </div>
 <div class="w-full flex justify-center mb-3">
     <input wire:model="search" type="text" class="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Filtra productos por codigo...">
 </div>
