@@ -11,10 +11,6 @@ class ProductList extends Component
     use WithPagination;
 
     public $search;
-    
-    protected $listeners = [
-        'productAddedToCart' => 'save',
-    ];
 
     public function mount(): void
     {
@@ -28,10 +24,5 @@ class ProductList extends Component
                 Product::paginate(12) :
                 Product::where('name', 'like', '%' . $this->search . '%')->paginate(12)
         ]);
-    }
-
-    public function save()
-    { 
-        session()->flash('message', 'Producto agregado al carrito.');
     }
 }
