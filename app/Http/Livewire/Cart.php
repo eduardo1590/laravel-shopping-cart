@@ -7,11 +7,13 @@ use Gloudemans\Shoppingcart\Facades\Cart as CartFcd;
 use LaravelDaily\Invoices\Invoice;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
+use App\Models\Client;
 
 class Cart extends Component
 {
     protected $total;
     protected $content;
+    public $buyer;
 
     protected $listeners = [
         'productAddedToCart' => 'updateCart',
@@ -32,6 +34,7 @@ class Cart extends Component
         return view('livewire.cart', [
             'total' => $this->total,
             'content' => $this->content,
+            'clients' => Client::all(),
         ]);
     }
 
@@ -91,15 +94,17 @@ class Cart extends Component
     public function checkout()
     {
         $this->updateCart();
+        $this->buyer = Client::find($this->buyer);
 
         $customer = new Buyer([
-            'name'          => 'John Doe',
+            'name'          => $this->buyer->name,
+            'address'       => $this->buyer->address,
             'custom_fields' => [
-                'email' => 'test@example.com',
+                'email' => $this->buyer->email,
+                'phone' => $this->buyer->phone
             ],
         ]);
 
-       // dd(CartFcd::content());
         $items = [];
         foreach ($this->content as $item){
             array_push($items, (new InvoiceItem())->title($item->name)->pricePerUnit($item->price)->quantity($item->qty));
@@ -107,23 +112,28 @@ class Cart extends Component
 
         CartFcd::destroy();
         $invoice = Invoice::make('Nota de Entrega')
+            ->sequence(667)
             ->buyer($customer)
             ->addItems($items)
-            ->filename($customer->name.'14072021')
+            ->filename($customer->name.date("d-m-Y"))
             ->logo(public_path('images/LOGO_WSG_222.png'))
             ->save();
 
-        return redirect('/dashboard');
+        return redirect('/productos');
     }
 
     public function cotizacion()
     {
         $this->updateCart();
 
+        $this->buyer = Client::find($this->buyer);
+
         $customer = new Buyer([
-            'name'          => 'John Doe',
+            'name'          => $this->buyer->name,
+            'address'       => $this->buyer->address,
             'custom_fields' => [
-                'email' => 'test@example.com',
+                'email' => $this->buyer->email,
+                'phone' => $this->buyer->phone
             ],
         ]);
 
@@ -137,10 +147,10 @@ class Cart extends Component
         $invoice = Invoice::make('Cotizacion')
             ->buyer($customer)
             ->addItems($items)
-            ->filename('Cotizacion'.$customer->name.'14072021')
+            ->filename('Cotizacion'.$customer->name.date("d-m-Y"))
             ->logo(public_path('images/LOGO_WSG_222.png'))
             ->save();
 
-        return redirect('/dashboard');
+        return redirect('/productos');
     }
 }
