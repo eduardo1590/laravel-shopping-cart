@@ -8,11 +8,13 @@ use LaravelDaily\Invoices\Invoice;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use App\Models\Client;
+use App\Models\Order;
 
 class Cart extends Component
 {
     protected $total;
     protected $content;
+    public $orderNumber;
     public $buyer;
 
     protected $listeners = [
@@ -26,6 +28,7 @@ class Cart extends Component
      */
     public function mount(): void
     {
+        $this->orderNumber = Order::max('number')+1;
         $this->updateCart();
     }
     
@@ -110,9 +113,18 @@ class Cart extends Component
             array_push($items, (new InvoiceItem())->title($item->name)->pricePerUnit($item->price)->quantity($item->qty));
         }
 
+        Order::create([
+            'number' => $this->orderNumber,
+            'client_id' => $this->buyer->id,
+            'amount' => $this->total,
+            'status' => 'Por Cobrar',
+            'expires_at'=> date('Ymd'),
+            'seller_id' => auth()->user()->id
+        ]);
+
         CartFcd::destroy();
         $invoice = Invoice::make('Nota de Entrega')
-            ->sequence(667)
+            ->sequence($this->orderNumber)
             ->buyer($customer)
             ->addItems($items)
             ->filename($customer->name.date("d-m-Y"))
